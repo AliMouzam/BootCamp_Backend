@@ -1,20 +1,19 @@
 const express = require('express');
 const app = express();
 
-const user = require('./Controllers/UserController')
 
+const multer  = require('multer')
+const upload = multer({ dest: 'images/' })
+
+const user = require('./Controllers/UserController')
 const responseService = require('./Services/responseService');
 //const routes = require("../api/routes");
-
 var router = require("express").Router();
-
 var bodyParser = require('body-parser');  
 
 var urlencodedParser = bodyParser.urlencoded({ extended: false })
-
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-
 
 const mongoose = require('mongoose');
 
@@ -41,10 +40,12 @@ router.post('/createUser',async (request,response) => {
 
  const data= responseService.responseMethod(res, 'create User')
   console.log("DATA", data)
-
 response.send(data)
 });
 
+router.post('/getImage', upload.single('image'), function (req, res, next) {
+  console.log("req",req.file);
+})
 
 //app.use(app)
 app.listen(8080, ()=>{

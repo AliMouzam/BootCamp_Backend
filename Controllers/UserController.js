@@ -3,6 +3,10 @@ const User= require("../Models/User.model")
 const bcrypt = require('bcrypt');
 
 
+const validateUser = require("../Schemas/user.schema.js");
+
+
+
 class USER {
   getUser= async()=>{
     try {
@@ -18,15 +22,23 @@ class USER {
     let user= req
     console.log(user)
 
-    if(!user.firstName || !user.lastName || !user.phone || !user.email){
-      return "Required data missing"
+    const {error} = validateUser(user)
+ 
+    console.log("validate", error);
+
+    // if(!user.firstName || !user.lastName || !user.phone || !user.email){
+    //   return "Required data missing"
+    // }
+
+    if(error){
+      return `Required data missing, ${error}`
     }
 
     let saltRounds=10;
 
     let myPlaintextPassword= user.password;
 
-    let res =new  Promise((resolve,reject )=>{
+    let res = new Promise((resolve,reject )=>{
 
     bcrypt.hash(myPlaintextPassword, saltRounds, function(err, hash) {
       // Store hash in your password DB.
@@ -34,12 +46,17 @@ class USER {
       user.password= hash
       resolve(hash)
       console.log("HASH PASSWORD", hash, "AFTER", user.password)
-  });
-
+      });
     })
-
+  
     console.log("PROMISE",await res)
-    user.password = await res
+    user.password = await res;
+
+    bcrypt.compare('fgfhftyfv$5654e', user.password, (err, result)=> {
+      console.log("RESULT", result)
+  });
+  
+   
 
     try {
       const res= await new User(user).save();
