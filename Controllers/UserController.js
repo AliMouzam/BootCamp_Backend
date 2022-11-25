@@ -2,6 +2,8 @@
 const User= require("../Models/User.model")
 const bcrypt = require('bcrypt');
 
+const {userSignToken} = require('../Services/jwtService')
+
 
 const validateUser = require("../Schemas/user.schema.js");
 
@@ -21,6 +23,9 @@ class USER {
 
     let user= req
     console.log(user)
+
+    let token = userSignToken(user)
+    console.log("TOKEN ======== >>>>>>>", await token)
 
     const {error} = validateUser(user)
  

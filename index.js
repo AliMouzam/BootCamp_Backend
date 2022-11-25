@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 const mongoose = require('mongoose');
+const { userVerifyToken } = require('./Services/jwtService');
 
 mongoose
   .connect('mongodb://127.0.0.1/TEST_DATABASE')
@@ -28,6 +29,21 @@ mongoose
   });
 
 app.use("/", router);
+
+//
+//let decode = userVerifyToken()
+
+router.post('/getUser', userVerifyToken ,async (request,response) => {
+  console.log("req", request.body)
+  const res =  await user.getUser(request.body)
+  console.log("RESPONSE", res)
+
+
+ const data= responseService.responseMethod(res, 'create User')
+  console.log("DATA", data)
+  response.send(data)
+});
+
 
 router.post('/createUser',async (request,response) => {
   console.log("req", request.body)
